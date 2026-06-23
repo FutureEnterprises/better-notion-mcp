@@ -27,3 +27,7 @@
 ## 2024-11-20 - Optimize property extraction hot paths
 **Learning:** Large `if/else if` chains checking a single string discriminator (e.g., `type === 'title'`, `type === 'rich_text'`) prevent JavaScript engines like V8 from using optimized O(1) jump tables, resulting in O(N) linear lookups on every iteration. Additionally, repeated string concatenation (`str +=`) within loops causes excessive garbage collection pressure due to string reallocation.
 **Action:** When evaluating a single string discriminator, use `switch (type)` statements. For string building, particularly when extracting property values in hot paths, use pre-allocated arrays (`new Array(len)`) combined with `.join('')` to minimize memory overhead.
+
+## 2026-06-23 - Optimize database search filter generation
+**Learning:** Combining two sequential loops (one for filtering, one for mapping) into a single pass avoids intermediate array allocations and reduces memory overhead. Using a `switch` statement for property type checks instead of `if/else` allows engines like V8 to use jump tables for O(1) branch dispatch.
+**Action:** When building filtered arrays from objects, use a single `for` loop with an indexed `Object.keys()` call and `push()` to the target array, while preferring `switch` for discriminator logic.
